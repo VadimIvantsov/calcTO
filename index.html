@@ -325,6 +325,18 @@
         display: block;
         margin-top: 6px;
       }
+      /* Подсветка заполненной строки и метка непроверенной цены. */
+      td.on,
+      tr:has(td.on) td {
+        background: #fff9f5;
+      }
+      #rowsFoot tr.grand td {
+        background: #f2faf7;
+        border-top: 2px solid var(--teal);
+      }
+      #rowsFoot tr.grand b {
+        color: var(--teal-dark);
+      }
       #rowsFoot tr:last-child td {
         background: #f2faf7;
         border-top: 2px solid var(--teal);
@@ -399,6 +411,196 @@
       }
       .kp-host {
         display: none;
+      }
+
+      /* ================== МОБИЛЬНАЯ ВЁРСТКА ==================
+         Таблицы с шестью колонками на телефоне не читаются, поэтому ниже 760px
+         каждая строка становится карточкой: подписи берутся из data-l. */
+      @media (max-width: 760px) {
+        body {
+          padding: 0 12px 16px;
+          font-size: 15px;
+        }
+        .brandbar {
+          margin: 0 -12px 16px;
+          padding: 12px;
+        }
+        .brandbar img {
+          height: 44px;
+        }
+        .brand-name {
+          font-size: 17px;
+        }
+        .brand-slogan {
+          font-size: 9.5px;
+          letter-spacing: 0.1em;
+        }
+        .brand-contacts {
+          text-align: left;
+          margin-left: 0;
+          width: 100%;
+        }
+        h1 {
+          font-size: 19px;
+        }
+        h1 small {
+          font-size: 13.5px;
+        }
+        h2 {
+          font-size: 15.5px;
+        }
+        .card {
+          padding: 14px 12px;
+          border-radius: 10px;
+        }
+        .tblwrap {
+          overflow-x: visible;
+        }
+
+        table.resp,
+        table.resp tbody,
+        table.resp tfoot,
+        table.resp tr,
+        table.resp td {
+          display: block;
+          width: 100%;
+        }
+        table.resp thead {
+          display: none;
+        }
+        table.resp tr {
+          border: 1px solid var(--line);
+          border-radius: 10px;
+          margin-bottom: 8px;
+          padding: 8px 10px;
+          background: #fff;
+        }
+        table.resp td {
+          border: none;
+          padding: 3px 0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          min-height: 26px;
+        }
+        table.resp td::before {
+          content: attr(data-l);
+          color: var(--muted);
+          font-size: 12.5px;
+          font-weight: 600;
+          flex: none;
+        }
+        /* Наименование — заголовком карточки, номер приклеен к нему. */
+        table.resp td.idx {
+          display: none;
+        }
+        table.resp td.name {
+          display: block;
+          font-weight: 600;
+          padding: 0 0 6px;
+          border-bottom: 1px solid var(--line);
+          margin-bottom: 5px;
+        }
+        table.resp td.name::before {
+          display: none;
+        }
+        table.resp td.name input[type="text"] {
+          border: 1px solid var(--line);
+          border-radius: 6px;
+          padding: 6px 8px;
+        }
+        table.resp td.del:empty {
+          display: none;
+        }
+        table.resp td.del {
+          justify-content: flex-end;
+        }
+        table.resp td.del::before {
+          display: none;
+        }
+        table.resp td input[type="number"] {
+          width: 110px;
+          padding: 7px 8px;
+          font-size: 16px; /* iOS не зумит поле от 16px */
+        }
+        table.resp tr.on,
+        table.resp tr:has(td.on) {
+          border-color: var(--accent);
+          background: #fff9f5;
+        }
+        table.resp tr:has(td.on) td {
+          background: transparent;
+        }
+        /* Подвал: тоже карточками, подписи из colspan-ячейки. */
+        table.resp tfoot tr {
+          background: #f8f9fa;
+        }
+        table.resp tfoot td[colspan] {
+          justify-content: space-between;
+        }
+        table.resp tfoot td[colspan]::before {
+          display: none;
+        }
+        table.resp tfoot td:last-child::before {
+          content: "Сумма";
+        }
+        #rowsFoot tr {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          padding: 7px 10px;
+          margin-bottom: 5px;
+        }
+        #rowsFoot td {
+          display: block;
+          width: auto;
+          padding: 0;
+          text-align: left;
+        }
+        #rowsFoot td::before,
+        #rowsFoot td:empty {
+          display: none;
+        }
+        #rowsFoot td.foot-l {
+          flex: 1;
+          font-size: 13.5px;
+        }
+
+        .results {
+          grid-template-columns: 1fr;
+          gap: 14px;
+        }
+        .total {
+          font-size: 25px;
+        }
+        .fld input,
+        .fld select,
+        .fld textarea {
+          font-size: 16px; /* иначе iOS зумит страницу при фокусе */
+        }
+        .stickybar {
+          padding: 10px 12px;
+          gap: 8px;
+          border-radius: 10px;
+        }
+        .stickybar .sum {
+          width: 100%;
+          margin-right: 0;
+        }
+        .stickybar .btn {
+          flex: 1 1 auto;
+          text-align: center;
+          padding: 11px 10px;
+        }
+        .toolbar .btn {
+          flex: 1 1 auto;
+        }
+        .preview {
+          padding: 8px;
+          overflow: hidden;
+        }
       }
     </style>
     <style id="kpcss">
@@ -603,14 +805,21 @@
       <!-- ============ 1. КАЛЬКУЛЯТОР ============ -->
       <div class="card">
         <h2>1. Калькулятор</h2>
+        <div class="fld">
+          <label for="fKind">Тип объекта</label>
+          <select id="fKind">
+            <option value="civil">Для гражданских объектов</option>
+            <option value="industrial">Для промышленных объектов</option>
+          </select>
+        </div>
         <div class="tblwrap">
-          <table>
+          <table class="resp">
             <thead>
               <tr>
                 <th style="width: 46px" class="center">№</th>
                 <th>Наименование</th>
                 <th style="width: 80px" class="center">Ед. изм.</th>
-                <th style="width: 130px" class="right">
+                <th style="width: 140px" class="right">
                   Цена ТО за ед./мес., руб.
                 </th>
                 <th style="width: 120px" class="center">Количество</th>
@@ -637,8 +846,9 @@
           </button>
         </div>
         <div class="note">
-          Цена указана за одну единицу оборудования за один месяц обслуживания.
-          Цену в строке можно поправить вручную под конкретный договор.
+          Цена указана за одну единицу оборудования за один месяц обслуживания и
+          берётся из выбранного прайса. Разовую надбавку или скидку по договору
+          удобнее задать коэффициентом ниже, а не правкой строк.
         </div>
 
         <h3>Ценообразование</h3>
@@ -683,7 +893,7 @@
       <div class="card">
         <h2>2. Состав КП</h2>
         <div class="tblwrap">
-          <table>
+          <table class="resp">
             <thead>
               <tr>
                 <th style="width: 46px" class="center">№</th>
@@ -851,59 +1061,66 @@
       /* ================== ПРАЙС ==================
    Источник: «перечень приборов и прайс.docx». Цена — за единицу оборудования
    за один месяц технического обслуживания. */
-      const PRICES = [
-        {
-          name: "Прибор приемно-контрольный пожарный",
-          unit: "шт.",
-          price: 497.77,
-        },
-        { name: "Блок индикации", unit: "шт.", price: 370.76 },
+      /* ================== ПРАЙСЫ ==================
+         Позиции и порядок в обоих прайсах одинаковые — различаются только цены.
+         Гражданские: «перечень приборов и прайс.docx».
+         Промышленные: «Расценки_обслуживания_цех_59_ТЭЦ.xlsx», лист «Прайс» —
+         посчитаны от Приложения 10 «Спецификация цех 59 ТЭЦ» как годовая
+         стоимость осмотров и контроля функционирования, делённая на 12. */
+      const CATALOG = [
+        { name: "Прибор приемно-контрольный пожарный", unit: "шт." },
+        { name: "Блок индикации", unit: "шт." },
         {
           name: "Извещатель пожарный дымовой (датчик пожарный дымовой)",
           unit: "шт.",
-          price: 51.22,
         },
         {
           name: "Извещатель пожарный тепловой (датчик пожарный тепловой)",
           unit: "шт.",
-          price: 48.23,
         },
         {
           name: "Извещатель пожарный ручной (датчик пожарный ручной)",
           unit: "шт.",
-          price: 31.98,
         },
-        {
-          name: "Прибор оповещения / усилитель мощности",
-          unit: "шт.",
-          price: 344.4,
-        },
+        { name: "Прибор оповещения / усилитель мощности", unit: "шт." },
         {
           name: "Оповещатель речевой (громкоговоритель настенный/потолочный)",
           unit: "шт.",
-          price: 90.83,
         },
-        { name: "Оповещатель звуковой (сирена)", unit: "шт.", price: 70.51 },
+        { name: "Оповещатель звуковой (сирена)", unit: "шт." },
         {
           name: "Оповещатель световой (табло «ВЫХОД», «СТРЕЛКА»)",
           unit: "шт.",
-          price: 72.63,
         },
-        { name: "Адресный модуль (адресная метка)", unit: "шт.", price: 23.44 },
-        {
-          name: "Изолятор шлейфа (блок контроля зоны)",
-          unit: "шт.",
-          price: 28.63,
-        },
-        { name: "Резервный источник питания", unit: "шт.", price: 47.53 },
-        { name: "Блок релейный", unit: "шт.", price: 44.2 },
-        { name: "Преобразователь интерфейсов", unit: "шт.", price: 95.42 },
-        {
-          name: "Автоматический информатор (информатор GSM)",
-          unit: "шт.",
-          price: 90.22,
-        },
+        { name: "Адресный модуль (адресная метка)", unit: "шт." },
+        { name: "Изолятор шлейфа (блок контроля зоны)", unit: "шт." },
+        { name: "Резервный источник питания", unit: "шт." },
+        { name: "Блок релейный", unit: "шт." },
+        { name: "Преобразователь интерфейсов", unit: "шт." },
+        { name: "Автоматический информатор (информатор GSM)", unit: "шт." },
       ];
+
+      // Цены по позициям CATALOG, в том же порядке.
+      const PRICE_SETS = {
+        civil: [
+          497.77, 370.76, 51.22, 48.23, 31.98, 344.4, 90.83, 70.51, 72.63,
+          23.44, 28.63, 47.53, 44.2, 95.42, 90.22,
+        ],
+        industrial: [
+          445, 445, 44.17, 4.21, 40.56, 344.4, 90.83, 91.67, 88.93, 35.42, 87.5,
+          385, 190.56, 95.42, 90.22,
+        ],
+      };
+
+      /** Прайс выбранного типа объекта. */
+      function priceList(kind) {
+        const prices = PRICE_SETS[kind] || PRICE_SETS.civil;
+        return CATALOG.map((c, i) => ({
+          name: c.name,
+          unit: c.unit,
+          price: prices[i],
+        }));
+      }
 
       const DEFAULT_LEAD =
         "Направляем коммерческое предложение на **техническое обслуживание систем " +
@@ -919,9 +1136,9 @@
       /* ================== СОСТОЯНИЕ ================== */
       // Версия ключа поднимается вместе с прайсом и подписантом по умолчанию:
       // иначе сохранённое в браузере состояние вернуло бы старые значения поверх новых.
-      const STORAGE_KEY = "to-sps-soue-v3";
+      const STORAGE_KEY = "to-sps-soue-v4";
       const state = {
-        equip: PRICES.map((p) => ({
+        equip: priceList("civil").map((p) => ({
           name: p.name,
           unit: p.unit,
           price: p.price,
@@ -931,6 +1148,27 @@
         rows: [], // свои строки менеджера: { name, price } — стоимость за месяц
         appendices: ["Таблица расчета стоимости работ."],
       };
+
+      /**
+       * Переключение прайса: цены каталожных строк берутся из выбранного набора,
+       * количества сохраняются, свои позиции менеджера остаются со своими ценами.
+       */
+      function applyPriceList(kind) {
+        const list = priceList(kind);
+        const byName = new Map(
+          state.equip.filter((e) => !e.custom).map((e) => [e.name, e]),
+        );
+        const custom = state.equip.filter((e) => e.custom);
+        state.equip = list
+          .map((p) => ({
+            name: p.name,
+            unit: p.unit,
+            price: p.price,
+            qty: byName.get(p.name)?.qty || 0,
+            custom: false,
+          }))
+          .concat(custom);
+      }
 
       /* ================== УТИЛИТЫ ================== */
       const NBSP = " ";
@@ -1251,12 +1489,21 @@
         $("equipBody").innerHTML = state.equip
           .map((e, i) => {
             const sum = (Number(e.qty) || 0) * (Number(e.price) || 0);
+            // Цена каталожной позиции только читается: её задаёт прайс.
+            // Своя позиция менеджера цены в прайсе не имеет, поэтому её вводят.
+            const priceCell = e.custom
+              ? '<input type="number" data-eq="price" data-i="' +
+                i +
+                '" min="0" step="0.01" value="' +
+                e.price +
+                '">'
+              : fmt(e.price);
             return (
               "<tr>" +
-              '<td class="center">' +
+              '<td class="center idx" data-l="№">' +
               (i + 1) +
               "</td>" +
-              "<td>" +
+              '<td class="name" data-l="Наименование">' +
               (e.custom
                 ? '<input type="text" data-eq="name" data-i="' +
                   i +
@@ -1265,20 +1512,18 @@
                   '" placeholder="Наименование">'
                 : escapeHtml(e.name)) +
               "</td>" +
-              '<td class="center">' +
+              '<td class="center" data-l="Ед. изм.">' +
               escapeHtml(e.unit) +
               "</td>" +
-              '<td class="right"><input type="number" data-eq="price" data-i="' +
-              i +
-              '" min="0" step="0.01" value="' +
-              e.price +
-              '"></td>' +
-              '<td class="center"><input type="number" data-eq="qty" data-i="' +
+              '<td class="right" data-l="Цена за ед./мес.">' +
+              priceCell +
+              "</td>" +
+              '<td class="center" data-l="Количество"><input type="number" data-eq="qty" data-i="' +
               i +
               '" min="0" step="1" value="' +
               e.qty +
               '"></td>' +
-              '<td class="right" data-sum="' +
+              '<td class="right" data-l="Стоимость, руб./мес." data-sum="' +
               i +
               '">' +
               fmt(sum) +
@@ -1297,8 +1542,7 @@
           const cell = document.querySelector('[data-sum="' + i + '"]');
           if (!cell) return;
           cell.textContent = fmt((Number(e.qty) || 0) * (Number(e.price) || 0));
-          cell.parentElement.style.background =
-            Number(e.qty) > 0 ? "#fff9f5" : "";
+          cell.parentElement.classList.toggle("on", Number(e.qty) > 0);
         });
         $("equipSum").textContent = fmt(
           state.equip.reduce(
@@ -1345,10 +1589,10 @@
             const j = i - firstExtra;
             return (
               "<tr>" +
-              '<td class="center">' +
+              '<td class="center idx" data-l="№">' +
               (i + 1) +
               "</td>" +
-              "<td>" +
+              '<td class="name" data-l="Наименование">' +
               (r.extra
                 ? '<input type="text" data-row="name" data-i="' +
                   j +
@@ -1357,13 +1601,13 @@
                   '" placeholder="Наименование работ">'
                 : escapeHtml(r.name)) +
               "</td>" +
-              '<td class="center">' +
+              '<td class="center" data-l="Ед. изм.">' +
               (r.unit ? escapeHtml(r.unit) : DASH) +
               "</td>" +
-              '<td class="center">' +
+              '<td class="center" data-l="Кол-во">' +
               (r.qty === null ? DASH : r.qty) +
               "</td>" +
-              '<td class="right">' +
+              '<td class="right" data-l="Цена в месяц">' +
               (r.extra
                 ? '<input type="number" data-row="price" data-i="' +
                   j +
@@ -1374,10 +1618,10 @@
                   ? DASH
                   : fmt(r.price)) +
               "</td>" +
-              '<td class="right">' +
+              '<td class="right" data-l="Стоимость в месяц">' +
               fmt(r.sum) +
               "</td>" +
-              '<td class="center">' +
+              '<td class="center del">' +
               (r.extra
                 ? '<button class="row-del" data-del="' +
                   j +
@@ -1393,9 +1637,9 @@
           .map(
             (f) =>
               "<tr" +
-              (f[2] ? ' style="background:#f8fafc"' : "") +
+              (f[2] ? ' class="grand"' : "") +
               ">" +
-              '<td colspan="5" class="right">' +
+              '<td colspan="5" class="right foot-l">' +
               (f[2] ? "<b>" + escapeHtml(f[0]) + "</b>" : escapeHtml(f[0])) +
               "</td>" +
               '<td class="right">' +
@@ -1689,8 +1933,34 @@
         $("kpHost").innerHTML = html;
         $("previewPaper").innerHTML = html;
         $("previewCard").hidden = false;
+        fitPreview();
         return html;
       }
+
+      /**
+       * Лист A4 шире телефона, поэтому предпросмотр ужимается под ширину экрана.
+       * Печать это не трогает: печатается #kpHost, а не предпросмотр.
+       */
+      function fitPreview() {
+        const paper = $("previewPaper");
+        const art = paper.querySelector(".cp");
+        if (!art) return;
+        art.style.transform = "";
+        paper.style.height = "";
+        const avail = paper.clientWidth;
+        const w = art.offsetWidth;
+        if (!avail || !w || w <= avail) return;
+        const k = avail / w;
+        art.style.transform = "scale(" + k + ")";
+        art.style.transformOrigin = "top left";
+        paper.style.height = art.offsetHeight * k + "px";
+      }
+
+      let fitTimer = null;
+      window.addEventListener("resize", () => {
+        clearTimeout(fitTimer);
+        fitTimer = setTimeout(fitPreview, 150);
+      });
 
       /* ================== ИНТЕРФЕЙС: ПРИЛОЖЕНИЯ ================== */
       function renderAppendices() {
@@ -1721,6 +1991,7 @@
 
       /* ================== СОХРАНЕНИЕ ================== */
       const FIELDS = [
+        "fKind",
         "fCustomer",
         "fObject",
         "fAddress",
@@ -1848,6 +2119,12 @@
         state.rows.push({ name: "", price: 0 });
         renderResult();
       });
+      $("fKind").addEventListener("change", () => {
+        applyPriceList($("fKind").value);
+        renderEquip();
+        renderResult();
+      });
+
       $("btnAddEquip").addEventListener("click", () => {
         state.equip.push({
           name: "",
