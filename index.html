@@ -623,60 +623,61 @@
       .cp * {
         box-sizing: border-box;
       }
-      .cp-top {
-        text-align: center;
-      }
-      .cp-org {
-        font-size: 30pt;
-        font-weight: 700;
-        line-height: 1.05;
-      }
-      .cp-org-full {
-        font-weight: 700;
-        margin: 0 -6.5mm 0 -7.5mm;
-        line-height: 1.15;
-      }
-      /* Линейка нарисована рамкой, а не фоном: фоновую заливку браузеры в PDF не печатают. */
-      .cp-rule {
-        height: 0;
-        border-top: 1.6mm solid var(--rule);
-        margin: 1.5mm auto;
-        width: 173mm;
-      }
-      .cp-lh {
-        width: 100%;
+      /* Шапка бланка УСН (ООО «СК Безопасность», Буздяк) — снята с генератора КП
+         (kp-generator/src/corporate.js, «42. Зубовский сельсовет.docx»): логотип 49,8 мм слева,
+         справа название 28 пт, синяя линейка до края листа и реквизиты Times New Roman 10 пт
+         полужирным по правому краю под тонкой чертой. */
+      .cp-usn-lh {
+        width: 174.3mm;
+        margin: 0 0 0 -1.3mm;
         border-collapse: collapse;
         table-layout: fixed;
-        margin: 1mm 0;
       }
-      .cp-lh td {
-        vertical-align: middle;
-        border: none;
+      .cp-usn-lh td {
         padding: 0;
+        border: none;
+        vertical-align: top;
       }
-      .cp-lh td.cp-lh-logo {
-        width: 82mm;
-        text-align: center;
-        padding: 0 3mm 0 0;
+      .cp-usn-lh td.cp-usn-logo {
+        width: 54.1mm;
       }
-      .cp-lh-logo img {
-        width: 66mm;
+      .cp-usn-logo img {
+        width: 49.8mm;
         height: auto;
-        display: inline-block;
+        display: block;
+        margin-top: 1mm;
       }
-      .cp-lh td.cp-lh-req {
-        width: 87mm;
-        border-left: 0.5pt solid #000;
-        padding: 0 0 0 3mm;
-        font-family:
-          "Book Antiqua", "Palatino Linotype", Palatino, Georgia, serif;
-        font-size: 9pt;
-        line-height: 1.2;
-        overflow-wrap: anywhere;
+      .cp-usn-lh td.cp-usn-side {
+        width: 120.2mm;
+        padding: 0 1.9mm;
+        font:
+          700 10pt/1.15 "Times New Roman",
+          Times,
+          serif;
+        text-align: right;
       }
-      .cp-lh-req a {
-        color: #0000ff;
-        font-weight: 700;
+      .cp-usn-org {
+        font-size: 28pt;
+        line-height: 1.1;
+        text-align: center;
+        white-space: nowrap;
+      }
+      /* Линейка рамкой, а не фоном (фон в PDF не печатается); уходит за правое поле. */
+      .cp-usn-rule {
+        height: 0;
+        border-top: 0.92mm solid var(--rule);
+        margin: 0.6mm -12.5mm 1.2mm 0;
+      }
+      /* Тонкая черта той же длины, что синяя линейка: тоже уходит за правое поле,
+         а текст реквизитов остаётся на месте за счёт padding. */
+      .cp-usn-req {
+        border-bottom: 0.5pt solid #000;
+        padding-bottom: 0.4mm;
+        margin-right: -12.5mm;
+        padding-right: 12.5mm;
+      }
+      .cp-usn-req a {
+        color: inherit;
         text-decoration: underline;
       }
       .cp-outnum {
@@ -1743,44 +1744,44 @@
       const clause = (n, html) =>
         '<p class="cp-p"><span class="cp-n">' + n + ".</span>" + html + "</p>";
 
+      /* Реквизиты шапки — бланк УСН из генератора КП (kp-generator/src/brand.js, профиль USN_INN). */
+      const LETTERHEAD = {
+        shortName: "ООО «СК Безопасность»",
+        inn: "0216995285",
+        kpp: "021601001",
+        ogrn: "1180280052116",
+        legalAddress:
+          "452710, РБ, Буздякский район, село Буздяк, ул.Садовая, д. 9",
+        phone: "+7 (347) 200-12-47",
+        mobile: "+7 (909) 349-14-67",
+        email: "info@sb-ufa.ru",
+        site: "www.sb-ufa.ru",
+      };
+
       function letterhead() {
-        const s = SENDER;
+        const s = LETTERHEAD;
         const rq = [
-          "Юр.адрес: " + s.legalAddress,
-          "П.адрес: " + s.postalAddress,
-          "ИНН" + NBSP + " " + s.inn + NBSP + " / " + NBSP + "КПП " + s.kpp,
-          "р/с " + s.account,
-          "в " + NBSP + s.bankName + "к/с " + s.corAccount,
-          "БИК " + s.bik + "/ ОГРН" + NBSP + " " + s.ogrn,
-          "Тел /факс: " + s.phone,
-          "Моб. " + s.mobile,
-          {
-            html:
-              "E-mail: " +
-              s.emails
-                .map((m) => '<a href="mailto:' + T(m) + '">' + T(m) + "</a>")
-                .join(";  "),
-          },
-          "Сайт: " + s.site,
+          T("ИНН " + s.inn + ", КПП " + s.kpp + ", ОГРН " + s.ogrn),
+          T("Юр.адрес: " + s.legalAddress),
+          T("Тел/Факс: " + s.phone),
+          T("Сотовый тел.: " + s.mobile),
+          // Сайт и почта в бланке одной строкой, почта — подчёркнутой ссылкой.
+          T("Сайт: " + s.site) +
+            ', E-mail: <a href="mailto:' + T(s.email) + '">' + T(s.email) + "</a>",
         ];
         return (
-          '<div class="cp-top">' +
-          '<div class="cp-org">' +
-          T(s.shortName) +
-          "</div>" +
-          '<div class="cp-org-full">' +
-          T(s.fullName) +
-          "</div></div>" +
-          '<div class="cp-rule"></div>' +
-          '<table class="cp-lh"><tr>' +
-          '<td class="cp-lh-logo">' +
+          '<table class="cp-usn-lh"><tr>' +
+          '<td class="cp-usn-logo">' +
           (LOGO ? '<img src="' + LOGO + '" alt="">' : "") +
           "</td>" +
-          '<td class="cp-lh-req">' +
-          rq.map((r) => "<div>" + (r.html ?? T(r)) + "</div>").join("") +
+          '<td class="cp-usn-side">' +
+          '<div class="cp-usn-org">' + T(s.shortName) + "</div>" +
+          '<div class="cp-usn-rule"></div>' +
+          '<div class="cp-usn-req">' +
+          rq.map((r) => "<div>" + r + "</div>").join("") +
+          "</div>" +
           "</td>" +
-          "</tr></table>" +
-          '<div class="cp-rule"></div>'
+          "</tr></table>"
         );
       }
 
